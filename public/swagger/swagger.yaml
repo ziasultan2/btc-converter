@@ -1,0 +1,38 @@
+swagger: '2.0'
+info:
+  description: LPT APis
+  version: 1.0.0
+  title: LPT Frontend API's
+basePath: /api/
+tags:
+  - name: Bitcoin
+    description: Bitcoin info
+
+paths:
+  /get-bitcoin-info:
+    get:
+      tags:
+        - Bitcoin
+      summary: Get Bitcoin info
+      description: 'Get Bitcoin info'
+      operationId: getBitcoinInfo
+      consumes:
+        - application/json
+      parameters:
+        - in: query
+          name: currency
+          type: string
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+        '422':
+          description: Bad request
+   
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
