@@ -8,17 +8,22 @@ class HomeService
 {
 	public function getBitcoinInfo($request)
 	{
-		$currentPrice = $this->getCurrentPrice($request);
-		$minAndMaxPrice = $this->getMinAndMaxPrice($request);
-
-		return response()->json(['current_price' => $currentPrice, 'min' => $minAndMaxPrice['min'], 'max' => $minAndMaxPrice['max']]);
+		$currentPrice = $this->getCurrentPrice($request->currency);
+		$minAndMaxPrice = $this->getMinAndMaxPrice($request->currency);
+		
+		return response()->json([
+			'success' => true,
+			'current_price' => $currentPrice, 
+			'min' => $minAndMaxPrice['min'], 
+			'max' => $minAndMaxPrice['max']
+		]);
 	}
 
-	public function getCurrentPrice($request)
+	public function getCurrentPrice($currency)
 	{
 		$res  = Http::get('https://api.coindesk.com/v1/bpi/currentprice.json');
 		$data = $res->json()['bpi'];
-		switch ($request->currency) {
+		switch ($currency) {
 			case 'usd':
 				return $data['USD']['rate_float'];
 				break;
@@ -34,11 +39,11 @@ class HomeService
 		}
 	}
 
-	public function getMinAndMaxPrice($request)
+	public function getMinAndMaxPrice($currency)
 	{
 		$start = now()->toDateString('Y-m-d');
 		$end = now()->subDays(30)->toDateString('Y-m-d');
-		$res  = Http::get('https://api.coindesk.com/v1/bpi/historical/close.json?start='.$end.'&end='.$start.'&currency='.$request->currency);
+		$res  = Http::get('https://api.coindesk.com/v1/bpi/historical/close.json?start='.$end.'&end='.$start.'&currency='.$currency);
 		$data = $res->json();
 		$list = array();
 		foreach ($data['bpi'] as $key => $value) {
